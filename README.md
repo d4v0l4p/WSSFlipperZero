@@ -1,25 +1,50 @@
-# Flipper Zero Spoof Temp
+# WSSFlipperZero
 
-A modified version of [spoof_temp](https://github.com/rgerganov/spoof_temp) designed specifically for the Flipper Zero. This project allows you to spoof temperature readings directly on the Flipper Zero device, enabling easy testing and experimenting with temperature-related functionality on your device.
+Generates a Flipper Zero Sub-GHz file that pretends to be a 433 MHz weather station sensor. You set ID, channel, temperature and humidity, and the Flipper sends it to your weather station.
 
-## 🚀 Features
+Based on [spoof_temp](https://github.com/rgerganov/spoof_temp) by rgerganov. The original writes raw IQ files for an SDR. This version writes a `.sub` file for the Flipper instead.
 
-- **Flipper Zero Integration**: **ONLY** compatible with the Flipper Zero SUBGHZ system.
-- **Temperature Spoofing**: Simulate custom temperature readings.
-- **Easy to Use**: Directly interacts with the Flipper Zero interface for seamless usage.
-- **Customizable**: Modify the spoofed temperature values to fit your needs for testing or development.
+## Build
 
-## 📦 Installation
+You only need a C++ compiler and make:
 
-To install the program, follow the steps below:
+```bash
+git clone https://github.com/d4v0l4p/WSSFlipperZero.git
+cd WSSFlipperZero
+make
+```
 
-### 1. Clone the repository:
+## Usage
 
-### 2. Do those steps!
-1. sudo apt install libhackrf-dev
-2. make
-3. **Usage: ./spoof_temp [-o file] [-i ID] [-c channel] [-t temp] [-h humidity]**
+```bash
+./spoof_temp -o <name> [-i ID] [-c channel] [-t temp] [-h humidity] [-f frequency]
+```
 
-It automatically saves you the .sub file!
-Just drag and drop it into the Flipper SD-Card on /subghz/ !
-To run it --> open Sub-GHz App on your Flipper --> saved --> there you have it!
+| Option | Meaning | Default |
+|---|---|---|
+| `-o` | output file name, `.sub` is added automatically (required) | |
+| `-i` | sensor ID (0-255) | 244 |
+| `-c` | channel (1-3) | 1 |
+| `-t` | temperature, one decimal | 26.3 |
+| `-h` | humidity in % (0-100) | 20 |
+| `-f` | frequency in Hz | 433920000 |
+
+Example:
+
+```bash
+./spoof_temp -o fake_sensor -i 244 -c 1 -t 21.5 -h 45
+```
+
+That creates `fake_sensor.sub`.
+
+## On the Flipper
+
+1. Copy the `.sub` file to `/subghz/` on the SD card
+2. Open Sub-GHz, go to Saved and pick the file
+3. Send
+
+Your station needs to be listening for the same ID and channel. Easiest way is to read the ID of your real sensor first (for example with the Flipper or rtl_433) and use that.
+
+## License
+
+MIT, see [LICENSE](LICENSE).
